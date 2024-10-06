@@ -1,0 +1,93 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.content-wrapper {
+    display: flex;
+    flex: 1;
+}
+.sidebar {
+    min-width: 150px;
+    background-color: #f8f9fab9;
+    padding: 20px;
+    justify-content: space-around;
+    text-align: center;
+}
+.content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+canvas {
+    cursor: pointer;
+    width: 95%;
+    height: 95%;
+    border: 1px solid #000;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+  
+}
+#pizarra_canva {
+    background-color: #ffffff; /* fondo blanco */
+  }
+#contenedor_sidebar_pizarra{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+.dropdown-menu-right {
+    right: 0;
+    left: auto;
+}
+
+
+/* Estilos de los colores seleccionables */
+.color-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.color-option {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.color-option.selected {
+    border: 2px solid #333; /* Selección activa */
+}
+
+/* Estilos del área de texto de la nota adhesiva */
+.note-area {
+    background-color:transparent;
+    height: 100px;
+    width: 100%;
+    border: #000 solid 2px;
+    resize: none;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+.text-area {
+    background-color:#fff799;
+    height: 100px;
+    width: 100%;
+  
+    resize: none;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
