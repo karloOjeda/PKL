@@ -153,6 +153,7 @@ function agregarcirculo() {
 }
 // Función para agregar un trapecio en la posición del clic
 function agregarTrapecio() {
+  desactivarDibujo()
   // Agregar un evento de clic al canvas
   canvaskenzit.on('mouse:down', function(event) {
       // Obtener las coordenadas del clic
@@ -194,6 +195,7 @@ function agregarTrapecio() {
 // Función para agregar un semicírculo en la posición del clic
 function agregarSemiCirculo() {
   // Agregar un evento de clic al canvas
+  desactivarDibujo()
   canvaskenzit.on('mouse:down', function(event) {
       // Obtener las coordenadas del clic
       const pointer = canvaskenzit.getPointer(event.e);
@@ -232,6 +234,7 @@ function agregarSemiCirculo() {
 // Función para agregar un triángulo rectángulo en la posición del clic
 function agregarTrianguloRectangulo() {
   // Agregar un evento de clic al canvas
+  desactivarDibujo();
   canvaskenzit.on('mouse:down', function(event) {
       // Obtener las coordenadas del clic
       const pointer = canvaskenzit.getPointer(event.e);
