@@ -5,6 +5,32 @@ const canvaskenzit = new fabric.Canvas('pizarra_canva', {
    container: document.getElementById('contenedor_sidebar_pizarra')
   });
 
+  let history = [];
+let historyIndex = -1;
+
+function saveState() {
+    if (historyIndex < history.length - 1) {
+        history = history.slice(0, historyIndex + 1);
+    }
+    history.push(canvaskenzit.toJSON());
+    historyIndex++;
+    console.log('guardado');
+}
+
+function undo() {
+    if (historyIndex > 0) {
+        historyIndex--;
+        canvaskenzit.loadFromJSON(history[historyIndex], canvaskenzit.renderAll.bind(canvaskenzit));
+    }
+}
+
+function redo() {
+    if (historyIndex < history.length - 1) {
+        historyIndex++;
+        canvaskenzit.loadFromJSON(history[historyIndex], canvaskenzit.renderAll.bind(canvaskenzit));
+    }
+}
+
   var colorVariable='#000000';
 
   var colorInput = document.getElementById('colorSeleccion');
@@ -21,9 +47,10 @@ colorInput.addEventListener('change', function() {
   canvaskenzit.on('mouse:wheel', function(opt) {
     var delta = opt.e.deltaY;
     var zoom = canvaskenzit.getZoom();
+    const zoomO=canvaskenzit.getZoom();
     zoom *= 0.999 ** delta;
     if (zoom > 20) zoom = 20;
-    if (zoom < 0.01) zoom = 0.01;
+    if (zoom < 1) zoom = zoomO;
     canvaskenzit.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
     opt.e.preventDefault();
     opt.e.stopPropagation();
@@ -31,49 +58,245 @@ colorInput.addEventListener('change', function() {
 
 
 
-//funcion para agregar un cuadrado
-function agregarcuadrado(){
+
+// Función para agregar un cuadrado en la posición del clic
+function agregarcuadrado() {
+  // Agregar un evento de clic al canvas
+  desactivarDibujo();
+ 
   
-  var cuadrado = new fabric.Rect({
-    width: 100, height: 100, fill:colorVariable, left: 100,
-    erasable: false
+  canvaskenzit.on('mouse:down', function(event) {
+      // Obtener las coordenadas del clic
+      const pointer = canvaskenzit.getPointer(event.e);
+      const x = pointer.x;
+      const y = pointer.y;
+
+      // Crear el cuadrado en la posición del clic
+      var cuadrado = new fabric.Rect({
+          width: 100,
+          height: 100,
+          stroke: colorVariable,
+          strokeWidth: 2,
+          fill: 'transparent',
+          left: x - 50, // Centrar el cuadrado en el clic
+          top: y - 50,  // Centrar el cuadrado en el clic
+          erasable: false
+      });
+
+      // Agregar el cuadrado al canvas
+      canvaskenzit.add(cuadrado);
+      saveState(); // Guardar el estado después de agregar el cuadrado
+
+      // Desactivar el evento de clic para evitar agregar múltiples cuadrados
+      canvaskenzit.off('mouse:down');
   });
-  canvaskenzit.add(cuadrado);
-  
 }
 
-//funcion para agregar un triangulo
-function agregartriangulo(){
- 
-  var triangulo = new fabric.Triangle({
-    width: 100,
-    height: 100,
-    fill: colorVariable, 
-    left: 100,
-    erasable: false
+// Función para agregar un triángulo en la posición del clic
+function agregartriangulo() {
+  desactivarDibujo()
+  // Agregar un evento de clic al canvas
+  canvaskenzit.on('mouse:down', function(event) {
+      // Obtener las coordenadas del clic
+      const pointer = canvaskenzit.getPointer(event.e);
+      const x = pointer.x;
+      const y = pointer.y;
+
+      // Crear el triángulo en la posición del clic
+      var triangulo = new fabric.Triangle({
+          width: 100,  // Ancho del triángulo
+          height: 100, // Altura del triángulo
+          left: x - 50, // Centrar el triángulo en el clic
+          top: y - 50,  // Centrar el triángulo en el clic
+          stroke: colorVariable,
+          strokeWidth: 2,
+          fill: 'transparent',
+          erasable: false
+      });
+
+      // Agregar el triángulo al canvas
+      canvaskenzit.add(triangulo);
+      saveState(); // Guardar el estado después de agregar el triángulo
+
+      // Desactivar el evento de clic para evitar agregar múltiples triángulos
+      canvaskenzit.off('mouse:down');
   });
-  canvaskenzit.add(triangulo);
-  
 }
-//funcion para agregar un circulo
-function agregarcirculo(){
-  
-  var circulo = new fabric.Circle({
-    radius: 50, fill: colorVariable, left: 100,
-    erasable: false
-  })
-  canvaskenzit.add(circulo);
-}
-//funcion para agregar un rombo
-function agregarrombo(){
- 
-  
-  var rombo = new fabric.Rect({
-    width: 100, height: 100, fill: colorVariable, left: 100, angle:45,
-    erasable: false
+// Función para agregar un círculo en la posición del clic
+function agregarcirculo() {
+  // Agregar un evento de clic al canvas
+  desactivarDibujo()
+  canvaskenzit.on('mouse:down', function(event) {
+      // Obtener las coordenadas del clic
+      const pointer = canvaskenzit.getPointer(event.e);
+      const x = pointer.x;
+      const y = pointer.y;
+
+      // Crear el círculo en la posición del clic
+      var circulo = new fabric.Circle({
+          radius: 50, // Radio del círculo
+          stroke: colorVariable,
+          strokeWidth: 2,
+          fill: 'transparent',
+          left: x-50, // Posición X del clic
+          top: y-50,  // Posición Y del clic
+          erasable: false
+      });
+
+      // Agregar el círculo al canvas
+      canvaskenzit.add(circulo);
+      saveState(); // Guardar el estado después de agregar el círculo
+
+      // Desactivar el evento de clic para evitar agregar múltiples círculos
+      canvaskenzit.off('mouse:down');
   });
-  canvaskenzit.add(rombo);
-  
+}
+// Función para agregar un trapecio en la posición del clic
+function agregarTrapecio() {
+  // Agregar un evento de clic al canvas
+  canvaskenzit.on('mouse:down', function(event) {
+      // Obtener las coordenadas del clic
+      const pointer = canvaskenzit.getPointer(event.e);
+      const x = pointer.x;
+      const y = pointer.y;
+
+      // Definir las dimensiones del trapecio
+      const base1 = 100; // Longitud de la base superior
+      const base2 = 150; // Longitud de la base inferior
+      const height = 100; // Altura del trapecio
+
+      // Crear la cadena de comandos SVG para el trapecio
+      const pathData = `
+          M ${x - base1 / 2} ${y} 
+          L ${x + base1 / 2} ${y} 
+          L ${x + base2 / 2} ${y + height} 
+          L ${x - base2 / 2} ${y + height} 
+          Z
+      `;
+
+      // Crear el trapecio como un objeto Path
+      const trapecio = new fabric.Path(pathData, {
+          fill: 'transparent', // Color de relleno
+          stroke: colorVariable, // Color del borde
+          strokeWidth: 2,
+          selectable: true // Permitir que el trapecio sea seleccionable
+      });
+
+      // Agregar el trapecio al canvas
+      canvaskenzit.add(trapecio);
+      canvaskenzit.renderAll(); // Renderizar el canvas para mostrar el nuevo objeto
+      saveState(); // Guardar el estado después de agregar el trapecio
+
+      // Desactivar el evento de clic para evitar agregar múltiples trapecios
+      canvaskenzit.off('mouse:down');
+  });
+}
+// Función para agregar un semicírculo en la posición del clic
+function agregarSemiCirculo() {
+  // Agregar un evento de clic al canvas
+  canvaskenzit.on('mouse:down', function(event) {
+      // Obtener las coordenadas del clic
+      const pointer = canvaskenzit.getPointer(event.e);
+      const x = pointer.x;
+      const y = pointer.y;
+
+      // Definir el radio del semicírculo
+      const radio = 50; // Puedes ajustar este valor
+
+      // Crear la cadena de comandos SVG para el semicírculo
+      const pathData = `
+          M ${x - radio} ${y} 
+          A ${radio} ${radio} 0 0 1 ${x + radio} ${y} 
+          L ${x + radio} ${y} 
+          L ${x - radio} ${y} 
+          Z
+      `;
+
+      // Crear el semicírculo como un objeto Path
+      const semiCirculo = new fabric.Path(pathData, {
+          fill: 'transparent', // Color de relleno
+          stroke: colorVariable, // Color del borde
+          strokeWidth: 2,
+          selectable: true // Permitir que el semicírculo sea seleccionable
+      });
+
+      // Agregar el semicírculo al canvas
+      canvaskenzit.add(semiCirculo);
+      canvaskenzit.renderAll(); // Renderizar el canvas para mostrar el nuevo objeto
+      saveState(); // Guardar el estado después de agregar el semicírculo
+
+      // Desactivar el evento de clic para evitar agregar múltiples semicírculos
+      canvaskenzit.off('mouse:down');
+  });
+}
+// Función para agregar un triángulo rectángulo en la posición del clic
+function agregarTrianguloRectangulo() {
+  // Agregar un evento de clic al canvas
+  canvaskenzit.on('mouse:down', function(event) {
+      // Obtener las coordenadas del clic
+      const pointer = canvaskenzit.getPointer(event.e);
+      const x = pointer.x;
+      const y = pointer.y;
+
+      // Definir las dimensiones del triángulo rectángulo
+      const base = 100; // Longitud de la base
+      const altura = 100; // Altura del triángulo
+
+      // Crear la cadena de comandos SVG para el triángulo rectángulo
+      const pathData = `
+          M ${x} ${y} 
+          L ${x + base} ${y} 
+          L ${x} ${y - altura} 
+          Z
+      `;
+
+      // Crear el triángulo rectángulo como un objeto Path
+      const trianguloRectangulo = new fabric.Path(pathData, {
+          fill: 'transparent', // Color de relleno
+          stroke: colorVariable, // Color del borde
+          strokeWidth: 2,
+          selectable: true // Permitir que el triángulo rectángulo sea seleccionable
+      });
+
+      // Agregar el triángulo rectángulo al canvas
+      canvaskenzit.add(trianguloRectangulo);
+      canvaskenzit.renderAll(); // Renderizar el canvas para mostrar el nuevo objeto
+      saveState(); // Guardar el estado después de agregar el triángulo rectángulo
+
+      // Desactivar el evento de clic para evitar agregar múltiples triángulos
+      canvaskenzit.off('mouse:down');
+  });
+}
+ // Función para agregar un rombo en la posición del clic
+function agregarrombo() {
+  desactivarDibujo()
+  // Agregar un evento de clic al canvas
+  canvaskenzit.on('mouse:down', function (event) {
+    // Obtener las coordenadas del clic
+    const pointer = canvaskenzit.getPointer(event.e);
+    const x = pointer.x;
+    const y = pointer.y;
+
+    // Crear el rombo en la posición del clic
+    var rombo = new fabric.Rect({
+      width: 100,
+      height: 100,
+      stroke: colorVariable,
+      strokeWidth: 2,
+      fill: 'transparent',
+      left: x, // Centrar el rombo en el clic
+      top: y - 50,  // Centrar el rombo en el clic
+      angle: 45,    // Rotar el rombo 45 grados para que se vea como un rombo
+      erasable: false
+    });
+
+    // Agregar el rombo al canvas
+    canvaskenzit.add(rombo);
+    saveState(); // Guardar el estado después de agregar el rombo
+
+    // Desactivar el evento de clic para evitar agregar múltiples rombos
+    canvaskenzit.off('mouse:down');
+  });
 }
 //////////////////////////////
 let objetosDeFondo = [];
@@ -82,7 +305,7 @@ let objetosDeFondo = [];
 function crearFondoCuadriculadoPeque() {
   quitarFondo();
   const tamanoCuadrado = 20; // Tamaño del cuadrado del patrón
-  const colorLinea = 'gray'; // Color de las líneas del patrón
+  const colorLinea = 'lightgray'; // Color de las líneas del patrón
   const grosorLinea = 1; // Grosor de las líneas del patrón
 
   for (let x = 0; x < canvaskenzit.getWidth(); x += tamanoCuadrado) {
@@ -90,7 +313,8 @@ function crearFondoCuadriculadoPeque() {
       stroke: colorLinea,
       strokeWidth: grosorLinea,
       erasable: false,
-      selectable: false 
+      selectable: false,
+      
     });
     objetosDeFondo.push(lineaVertical);
     canvaskenzit.add(lineaVertical);
@@ -111,7 +335,7 @@ function crearFondoCuadriculadoPeque() {
 function crearFondoCuadriculadoGrande() {
   quitarFondo();
   const tamanoCuadrado = 40; // Tamaño del cuadrado del patrón
-  const colorLinea = 'gray'; // Color de las líneas del patrón
+  const colorLinea = 'lightgray'; // Color de las líneas del patrón
   const grosorLinea = 1; // Grosor de las líneas del patrón
 
   for (let x = 0; x < canvaskenzit.getWidth(); x += tamanoCuadrado) {
@@ -140,7 +364,7 @@ function crearFondoCuadriculadoGrande() {
 function crearFondoLineasHorizontalesPeque() {
   quitarFondo();
   const tamanoLinea = 20; // Tamaño de la línea
-  const colorLinea = 'gray'; // Color de las líneas
+  const colorLinea = 'lightgray'; // Color de las líneas
   const grosorLinea = 1; // Grosor de las líneas
 
   for (let y = 0; y < canvaskenzit.getHeight(); y += tamanoLinea) {
@@ -158,7 +382,7 @@ function crearFondoLineasHorizontalesPeque() {
 function crearFondoLineasHorizontalesGrandes() {
   quitarFondo();
   const tamanoLinea = 40; // Tamaño de la línea
-  const colorLinea = 'gray'; // Color de las líneas
+  const colorLinea = 'lightgray'; // Color de las líneas
   const grosorLinea = 1; // Grosor de las líneas
 
   for (let y = 0; y < canvaskenzit.getHeight(); y += tamanoLinea) {
@@ -176,7 +400,7 @@ function crearFondoLineasHorizontalesGrandes() {
 function crearFondoLineasVerticalesPeque() {
   quitarFondo();
   const tamanoLinea = 20; // Tamaño de la línea
-  const colorLinea = 'gray'; // Color de las líneas
+  const colorLinea = 'lightgray'; // Color de las líneas
   const grosorLinea = 1; // Grosor de las líneas
 
   for (let x = 0; x < canvaskenzit.getWidth(); x += tamanoLinea) {
@@ -194,7 +418,7 @@ function crearFondoLineasVerticalesPeque() {
 function crearFondoLineasVerticalesGrande() {
   quitarFondo();
   const tamanoLinea = 40; // Tamaño de la línea
-  const colorLinea = 'gray'; // Color de las líneas
+  const colorLinea = 'lightgray'; // Color de las líneas
   const grosorLinea = 1; // Grosor de las líneas
 
   for (let x = 0; x < canvaskenzit.getWidth(); x += tamanoLinea) {
@@ -234,6 +458,7 @@ function pantallaCompleta() {
 //funcion para la goma de borrar
 
 function Borrador() {
+  cambiarPuntero("cursores/borrador.png");
   console.log('borrador')
     //  same as `PencilBrush`
     canvaskenzit.freeDrawingBrush = new fabric.EraserBrush(canvaskenzit);
@@ -351,7 +576,7 @@ function uploadImage() {
 
 function dibujarBoligrafo(){
   desactivarDibujo();
-  
+  cambiarPuntero("cursores/boligrafo.png");
   
   canvaskenzit.isDrawingMode=true;
   canvaskenzit.freeDrawingBrush = new fabric.PencilBrush(canvaskenzit);
@@ -366,7 +591,8 @@ function dibujarBoligrafo(){
 
  //dibujar pluma
  function dibujarPluma(){
-  
+  desactivarDibujo();
+  cambiarPuntero("cursores/pluma.png");
   canvaskenzit.isDrawingMode=true;
   canvaskenzit.freeDrawingBrush = new fabric.PencilBrush(canvaskenzit);
   canvaskenzit.freeDrawingBrush.color=colorVariable;
@@ -379,7 +605,8 @@ function dibujarBoligrafo(){
 //dibujar resaltador
 
 function dibujarResaltador(){
-  
+  desactivarDibujo()
+  cambiarPuntero("cursores/resaltador.png");
   canvaskenzit.isDrawingMode = true;
   canvaskenzit.freeDrawingBrush = new fabric.PencilBrush(canvaskenzit);
   canvaskenzit.freeDrawingBrush.color = colorVariable;
@@ -460,70 +687,170 @@ function cambiarColor(element, color) {
 
   // Añade la clase 'selected' al elemento actual
   element.classList.add('selected');
-
-  document.querySelector('.note-area').style.backgroundColor = color;
+  document.getElementById('noteArea').style.backgroundColor=color;
+  
 }
 //funicon para agregar la nota adhesiva
 function guardarNota() {
   // Obtener el texto de la nota
-  const notaText = document.querySelector('.text-area ').value;
+  const notaText = document.querySelector('.text-area').value;
 
   // Obtener el color seleccionado
   const colorSeleccionado = document.querySelector('.color-option.selected').style.backgroundColor;
-///////////////////////////////////
 
-  // Crear el rectángulo de la nota adhesiva
-  const notaRect = new fabric.Rect({
-    width: 150,
-    height: 100,
-    fill: colorSeleccionado,
-    rx: 10, // radio de curvatura para darle un aspecto redondeado
-    ry: 0,
-    stroke: 'black',
-    strokeWidth: 2
+  // Crear un cuadro de texto editable para la nota con un borde
+  const notaTextBox = new fabric.Textbox(notaText, {
+      fontSize: 25,
+      fontFamily: 'Arial',
+      fill: 'black', // Color del texto
+      left: 100, // Posición X del cuadro de texto en el canvas
+      top: 100, // Posición Y del cuadro de texto en el canvas
+      width: 150, // Ancho del cuadro de texto
+      editable: true, // Permite la edición del texto
+      backgroundColor: colorSeleccionado, // Color de fondo del cuadro de texto
+      textAlign:'center',
+      originX:'center'
+      
   });
 
-  // Crear el texto de la nota adhesiva
-  const notaTextObject = new fabric.Text(notaText, {
-    fontSize: 18,
-    fontFamily: 'Arial',
-    fill: 'black',
-    left: 10,
-    top: 10
-  });
+  // Agregar el cuadro de texto al canvas
+  canvaskenzit.add(notaTextBox);
 
-  // Agrupar el rectángulo y el texto en un grupo
-  const notaAdhesiva = new fabric.Group([notaRect, notaTextObject], {
-    left: 100,
-    top: 100,
-    erasable:false
-  });
-
-  // Agregar la nota adhesiva al canvas
-  canvaskenzit.add(notaAdhesiva);
-
-/////////////////////////////////
   // Limpiar el área de texto
-  document.querySelector('.note-area').value = '';
+  document.querySelector('.text-area').value = '';
+  document.getElementById('btncancelarnota').click();
+}
+
+
+
+function agregarTexto() {
+
+  ///////////////////////////
+  desactivarDibujo()
+  // Agregar un evento de clic al canvas
+  canvaskenzit.on('mouse:down', function (event) {
+    // Obtener las coordenadas del clic
+    const pointer = canvaskenzit.getPointer(event.e);
+    const x = pointer.x;
+    const y = pointer.y;
+
+   // Obtener el texto de la nota
+  const notaText = '';
+
+  
+
+  // Crear un nuevo objeto Textbox
+  const textBox = new fabric.Textbox(notaText, {
+      fill: 'black', // Color del texto
+      fontSize: 24,
+      left: x, // Posición inicial (puedes cambiar esto)
+      top: y, // Posición inicial (puedes cambiar esto)
+      width: 200, // Ancho del cuadro de texto
+      editable: true // Permite la edición del texto
+  });
+
+  // Agregar el Textbox al canvas
+  canvaskenzit.add(textBox);
+  canvaskenzit.setActiveObject(textBox); // Seleccionar el objeto para edita
+    // Desactivar el evento de clic para evitar agregar múltiples rombos
+    canvaskenzit.off('mouse:down');
+  });
+  ///////////////////////
+  
+  
+
+
 
 }
 
-//funcion para agregar el texto
-function AgregarText() {
-  // Obtener el texto de la nota
-  const notaText = document.querySelector('.note-area').value;
- 
-  const textColor = colorVariable;
-  const text = new fabric.Text(notaText, {
-    fill: textColor,
-    fontSize: 24,
-    left: 100,
-    top: 100
-  });
 
-  canvaskenzit.add(text);
-/////////////////////////////////
-  // Limpiar el área de texto
-  document.querySelector('.note-area').value = '';
 
+
+//funcion para cambiar el puntero de las herramientas
+function cambiarPuntero(cursorUrl) {
+  // Verificar si cursorUrl tiene un valor definido
+  if (cursorUrl) {
+      // Cambiar a una imagen personalizada
+      canvaskenzit.freeDrawingCursor = `url("${cursorUrl}") 0 32, crosshair`;
+  } else {
+      // Establecer el cursor por defecto a crosshair
+      canvaskenzit.freeDrawingCursor = 'crosshair';
+  }
 }
+//funciones para deshacer y hacer
+document.addEventListener('keydown', function(event) {
+  // Verificar si se presiona Ctrl (o Cmd en Mac) y Z
+  if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+    console.log('teclas presionadas')
+      event.preventDefault(); // Prevenir la acción por defecto
+      undo(); // Llamar a la función de deshacer
+  }
+  // Verificar si se presiona Ctrl (o Cmd en Mac) y Y
+  else if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+      event.preventDefault(); // Prevenir la acción por defecto
+      redo(); // Llamar a la función de rehacer
+  }
+  // Verificar si se presiona Ctrl (o Cmd en Mac) y Shift y Z para rehacer
+  else if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'z') {
+      event.preventDefault(); // Prevenir la acción por defecto
+      redo(); // Llamar a la función de rehacer
+  }
+});
+
+
+
+// funcion para copiar un objeto
+function Copy() {
+	// clone what are you copying since you
+	// may want copy and paste on different moment.
+	// and you do not want the changes happened
+	// later to reflect on the copy.
+	canvaskenzit.getActiveObject().clone(function(cloned) {
+		_clipboard = cloned;
+	});
+}
+// Evento para detectar teclas presionadas
+document.addEventListener('keydown', function(event) {
+    // Verificar si se presiona Ctrl (o Cmd en Mac) y C
+    if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+        event.preventDefault(); // Prevenir la acción por defecto (copiar al portapapeles)
+        Copy(); // Llamar a la función de copiar
+        console.log('Objeto copiado al portapapeles');
+    }
+});
+
+// Función para pegar el objeto copiado
+function Paste() {
+  // Verificar si hay un objeto copiado en _clipboard
+  if (!_clipboard) {
+      console.log('No hay objeto copiado para pegar.');
+      return; // No hacer nada si no hay objeto copiado
+  }
+
+  // Clonar el objeto copiado
+  _clipboard.clone(function(clonedObj) {
+      canvaskenzit.discardActiveObject(); // Deseleccionar cualquier objeto activo
+      clonedObj.set({
+          left: clonedObj.left + 10, // Mover un poco a la derecha
+          top: clonedObj.top + 10, // Mover un poco hacia abajo
+          evented: true,
+      });
+      canvaskenzit.add(clonedObj); // Agregar el objeto clonado al lienzo
+      canvaskenzit.setActiveObject(clonedObj); // Seleccionar el objeto pegado
+      canvaskenzit.requestRenderAll(); // Renderizar el lienzo
+
+      // Vaciar el portapapeles después de pegar
+      _clipboard = null; // O también puedes usar _clipboard = undefined;
+      console.log('Objeto pegado y el portapapeles ha sido vaciado.');
+  });
+}
+
+// Evento para detectar Ctrl + V para pegar
+document.addEventListener('keydown', function(event) {
+  // Verificar si se presiona Ctrl (o Cmd en Mac) y V
+  if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
+      event.preventDefault(); // Prevenir la acción por defecto (pegar)
+      Paste(); // Llamar a la función de pegar
+      console.log('Intentando pegar el objeto en el lienzo');
+  }
+});
