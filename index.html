@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizarra Kenzit School</title>
-    
+
     <script src="https://kit.fontawesome.com/8ca29e5082.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
     <!-- fabric -->
     <script src="fabric.min.js"></script>
-  
-       
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+
 </head>
+
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand navbar-light py-0" style="background-color:#615dfb;">
+    <nav class="navbar navbar-expand navbar-light py-0 titulos" style="background-color:#615dfb;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><img src="logo_kenzit_blanco.png" alt="kenzit" width="100px"></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <input type="text" class="form-control-sm rounded" id="txt_titulo" placeholder="Ingresa un Título">
 
             <!--boton para los fondos-->
             <div class="dropdown">
-                <a class="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="btn dropdown-toggle titulos" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Establecer Fondo
                 </a>
-            
+
                 <ul class="dropdown-menu">
                     <li class="dropdown-item btn" onclick="quitarFondo()">Sin fondo</li>
                     <li class="dropdown-item btn" onclick="crearFondoCuadriculadoPeque()">Cuadrado Pequeño</li>
@@ -42,25 +48,30 @@
                     <li class="dropdown-item btn" onclick="crearFondoLineasVerticalesGrande()">Vertical Grande</li>
                 </ul>
             </div>
+             <!--boton para ATRAS-->
+             <a class="btn titulos" href="#" onclick="undo()" role="button">
+                <i class="bi bi-arrow-counterclockwise "></i>
+            </a>
+              <!--boton para ADELANTE-->
+              <a class="btn titulos" href="#" onclick="redo()" role="button">
+                <i class="bi bi-arrow-clockwise"></i>
+            </a>
             <!--boton para vaciar la pizarra-->
-            <a class="btn " href="#" onclick="borrarTodo()" role="button">
+            <a class="btn titulos" href="#" onclick="borrarTodo()" role="button">
                 Vaciar Pizarra
             </a>
-            <!--boton para vaciar la pizarra-->
-            <a class="btn btn-hover" href="#" onclick="guardarCanvas()" role="button">
-                Guardar Pizarra
-            </a>
+            
             <!--descargar pizarra-->
             <div class="dropdown">
-                <a class="btn dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Descargar Pizarra
+                <a class="btn dropdown-toggle titulos" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Descargar Pizarra
                 </a>
-              
+
                 <ul class="dropdown-menu">
-                  <li class="dropdown-item bnt" onclick="descargarCanvasJPG()">JPG</li>
-                  <li class="dropdown-item btn" onclick="descargarCanvasPNG()">PNG</li>
-                  
-                  
+                    <li class="dropdown-item bnt" onclick="downloadCanvasAsPDF()">PDF</li>
+                   
+
+
                 </ul>
             </div>
         </div>
@@ -70,7 +81,7 @@
     <div class="content-wrapper">
         <!-- Sidebar -->
         <div class="sidebar d-flex flex-column ">
-            
+
             <ul class="nav flex-column w-100">
                 <!---selector de color-->
                 <li class="nav-item btn">
@@ -78,96 +89,154 @@
                 </li>
                 <!--tipos de boligrafos-->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle btn" href="#" id="dropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle btn" href="#" id="dropdownMenuLink1" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i id="lapiz" class="fa-solid fa-pencil"></i> Bolígrafos
                     </a>
                     <!--lista de boligrafos-->
                     <ul class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdownMenuLink1">
                         <!--boligrafo-->
-                        <li onclick="dibujarBoligrafo()" class="dropdown-item  btn"><i title="Boligrafo"
-                            id="boligrafo" class="fa-solid fa-pencil"></i> Boligrafo</li>
+                        <li onclick="dibujarBoligrafo()" class="dropdown-item  btn"><i title="Boligrafo" id="boligrafo"
+                                class="fa-solid fa-pencil"></i> Boligrafo</li>
                         <!--REsaltador-->
                         <li onclick="dibujarResaltador()" class="dropdown-item btn"><i id="resaltador"
-                            class="fa-solid fa-highlighter"></i> Resaltador</li>
+                                class="fa-solid fa-highlighter"></i> Resaltador</li>
                         <!--pluma-->
                         <li onclick="dibujarPluma()" class="dropdown-item btn"><i id="pluma"
-                            class="fa-solid fa-pen-fancy"></i> Pluma</li>
-                                            </ul>
+                                class="fa-solid fa-pen-fancy"></i> Pluma</li>
+                    </ul>
                 </li>
                 <!--boton goma de borrar-->
                 <li class="nav-item">
-                    <a class="nav-link" onclick="Borrador()" role="button"  aria-expanded="false">
+                    <a class="nav-link" onclick="Borrador()" role="button" aria-expanded="false">
                         <i id="borrar" class="fa-solid fa-eraser"></i> Borrador
                     </a>
                 </li>
-                 <!--boton seleccionar-->
-                 <li class="nav-item">
-                    <a class="nav-link" onclick="desactivarDibujo()" role="button"  aria-expanded="false">
-                        <i class="fa-solid fa-arrow-pointer" ></i> Seleccionar
+                <!--boton seleccionar-->
+                <li class="nav-item">
+                    <a class="nav-link" onclick="desactivarDibujo()" role="button" aria-expanded="false">
+                        <i class="fa-solid fa-arrow-pointer"></i> Seleccionar
                     </a>
                 </li>
-                 <!--boton nota adhesiva-->
-                 <li class="nav-item">
-                    <a class="nav-link"  role="button"  data-bs-toggle="modal" data-bs-target="#modalNota">
+                <!--boton nota adhesiva-->
+                <li class="nav-item">
+                    <a class="nav-link" role="button" data-bs-toggle="modal" data-bs-target="#modalNota">
                         <i id="notead" class="fa-solid fa-note-sticky"></i> Nota Adhesiva
                     </a>
                 </li>
                 <!--boton agregar imagen-->
                 <li class="nav-item">
-                    <a class="nav-link" onclick="uploadImage()" role="button"  aria-expanded="false">
-                        <i id="uploadIcon" class="fa-solid fa-image" onclick="uploadImage();desactivarDibujo()"></i> Añadir Imágen
-                    <input onchange="uploadImageToCanvas()" type="file" id="fileInput" accept="image/*" name="image" style="display: none;">
+                    <a class="nav-link" onclick="uploadImage()" role="button" aria-expanded="false">
+                        <i id="uploadIcon" class="fa-solid fa-image" onclick="uploadImage();desactivarDibujo()"></i>
+                        Añadir Imágen
+                        <input onchange="uploadImageToCanvas()" type="file" id="fileInput" accept="image/*" name="image"
+                            style="display: none;">
                     </a>
                 </li>
                 <!--boton de figuras-->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i id='figuras'> <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="20" height="20">
-                            <path d="m24,2h-11v4.331l-2.569-4.333c-.361-.625-1.009-.999-1.731-.999s-1.37.374-1.732,1.001L.107,14h7.184c-.189.634-.292,1.305-.292,2,0,3.86,3.141,7,7,7s7-3.14,7-7c0-1.073-.243-2.09-.676-3h3.676V2ZM1.83,13L7.833,2.5c.363-.626,1.368-.631,1.735.004l3.432,5.786v.782c-2.355.338-4.335,1.853-5.324,3.928H1.83Zm12.17,9c-3.309,0-6-2.691-6-6s2.691-6,6-6,6,2.691,6,6-2.691,6-6,6Zm9-10h-3.259c-1.266-1.812-3.368-3-5.741-3V3h9v9Z"/>
-                          </svg> </i> Figuras
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink1" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i id='figuras'> <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1"
+                                viewBox="0 0 24 24" width="20" height="20">
+                                <path
+                                    d="m24,2h-11v4.331l-2.569-4.333c-.361-.625-1.009-.999-1.731-.999s-1.37.374-1.732,1.001L.107,14h7.184c-.189.634-.292,1.305-.292,2,0,3.86,3.141,7,7,7s7-3.14,7-7c0-1.073-.243-2.09-.676-3h3.676V2ZM1.83,13L7.833,2.5c.363-.626,1.368-.631,1.735.004l3.432,5.786v.782c-2.355.338-4.335,1.853-5.324,3.928H1.83Zm12.17,9c-3.309,0-6-2.691-6-6s2.691-6,6-6,6,2.691,6,6-2.691,6-6,6Zm9-10h-3.259c-1.266-1.812-3.368-3-5.741-3V3h9v9Z" />
+                            </svg> </i> Figuras
                     </a>
                     <!--lista de figuras-->
                     <ul class="dropdown-menu dropdown-menu-center" aria-labelledby="dropdownMenuLink1">
                         <!--Circulo-->
-                        <li onclick="agregarcirculo()" class="dropdown-item btn"><i id="circulo"><img src="cursores/registro.png" alt=""></i> Circulo</li>
+                        <li onclick="agregarcirculo()" class="dropdown-item btn"><i id="circulo"><img
+                                    src="cursores/registro.png" alt=""></i> Circulo</li>
                         <!--Cuadrado-->
-                        <li onclick="agregarcuadrado()" class="dropdown-item btn"><i id="cuadrado"><img src="cursores/cuadrado.png" alt=""></i> Cuadrado</li>
+                        <li onclick="agregarcuadrado()" class="dropdown-item btn"><i id="cuadrado"><img
+                                    src="cursores/cuadrado.png" alt=""></i> Cuadrado</li>
                         <!--triangulo-->
-                        <li onclick="agregartriangulo()" class="dropdown-item btn"><i id="triangulo"><img src="cursores/triangulo.png" alt=""></i> Triangulo</li>
-                         <!--trianguloRectangulo-->
-                         <li onclick="agregarTrianguloRectangulo()" class="dropdown-item btn"><i id="trianguloRectangulo"><img src="cursores/triangulo-rectangulo.png" alt=""></i> Triangulo Rectangulo</li>
+                        <li onclick="agregartriangulo()" class="dropdown-item btn"><i id="triangulo"><img
+                                    src="cursores/triangulo.png" alt=""></i> Triangulo</li>
+                        <!--trianguloRectangulo-->
+                        <li onclick="agregarTrianguloRectangulo()" class="dropdown-item btn"><i
+                                id="trianguloRectangulo"><img src="cursores/triangulo-rectangulo.png" alt=""></i>
+                            Triangulo Rectangulo</li>
                         <!--Rombo-->
-                        <li onclick="agregarrombo()" class="dropdown-item btn"><i id="rombo"><img src="cursores/rombo.png" alt=""></i> Rombo</li>
+                        <li onclick="agregarrombo()" class="dropdown-item btn"><i id="rombo"><img
+                                    src="cursores/rombo.png" alt=""></i> Rombo</li>
                         <!--trapecio-->
-                        <li onclick="agregarTrapecio()" class="dropdown-item btn"><i id="trapecio"><img src="cursores/trapecio.png" alt=""></i> Trapecio</li>
+                        <li onclick="agregarTrapecio()" class="dropdown-item btn"><i id="trapecio"><img
+                                    src="cursores/trapecio.png" alt=""></i> Trapecio</li>
                         <!--semicirculo-->
-                        <li onclick="agregarSemiCirculo()" class="dropdown-item btn"><i id="semicirculo"><img src="cursores/semicirculo.png" alt=""></i>  Semicirculo</li>
+                        <li onclick="agregarSemiCirculo()" class="dropdown-item btn"><i id="semicirculo"><img
+                                    src="cursores/semicirculo.png" alt=""></i> Semicirculo</li>
                     </ul>
                 </li>
                 <!--boton para agregar texto-->
                 <li class="nav-item">
-                    <a class="nav-link" role="button" data-bs-toggle="" onclick="agregarTexto()" data-bs-target="#modalTexto">
+                    <a class="nav-link" role="button" data-bs-toggle="" onclick="agregarTexto()"
+                        data-bs-target="#modalTexto">
                         <i id="txtadd">
-                            <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="20" height="20">
-                                <path style="stroke-width: 1; user-select: none;" d="M21,17 L23,17 L23,23 L17,23 L17,21 L7,21 L7,23 L1,23 L1,17 L3,17 L3,7 L1,7 L1,1 L7,1 L7,3 L17,3 L17,1 L23,1 L23,7 L21,7 L21,17 Z M21,19 L19,19 L19,21 L21,21 L21,19 Z M17,19 L17,17 L19,17 L19,7 L17,7 L17,5 L7,5 L7,7 L5,7 L5,17 L7,17 L7,19 L17,19 Z M21,5 L21,3 L19,3 L19,5 L21,5 Z M5,21 L5,19 L3,19 L3,21 L5,21 Z M3,5 L5,5 L5,3 L3,3 L3,5 Z M13,10 L13,16 L11,16 L11,10 L8,10 L8,8 L16,8 L16,10 L13,10 Z"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24"
+                                width="20" height="20">
+                                <path style="stroke-width: 1; user-select: none;"
+                                    d="M21,17 L23,17 L23,23 L17,23 L17,21 L7,21 L7,23 L1,23 L1,17 L3,17 L3,7 L1,7 L1,1 L7,1 L7,3 L17,3 L17,1 L23,1 L23,7 L21,7 L21,17 Z M21,19 L19,19 L19,21 L21,21 L21,19 Z M17,19 L17,17 L19,17 L19,7 L17,7 L17,5 L7,5 L7,7 L5,7 L5,17 L7,17 L7,19 L17,19 Z M21,5 L21,3 L19,3 L19,5 L21,5 Z M5,21 L5,19 L3,19 L3,21 L5,21 Z M3,5 L5,5 L5,3 L3,3 L3,5 Z M13,10 L13,16 L11,16 L11,10 L8,10 L8,8 L16,8 L16,10 L13,10 Z">
+                                </path>
                             </svg>
                         </i> Añadir Texto
                     </a>
                 </li>
-                 <!--boton pantalla completa-->
-                 <li class="nav-item">
-                    <a class="nav-link" onclick="pantallaCompleta()" role="button"  aria-expanded="false">
+                <!--boton pantalla completa-->
+                <li class="nav-item">
+                    <a class="nav-link" onclick="pantallaCompleta()" role="button" aria-expanded="false">
                         <i class="bi bi-arrows-fullscreen"></i> FullScreen
                     </a>
+                </li>
+                <!--zoom-->
+                <li class="nav-item">
+                    <a class="nav-link" onclick="iniciarCanvasInteractions()" role="button" aria-expanded="false">
+                        <i class="bi bi-zoom-in"></i> zoom
+                    </a>
+                </li>
+                <!--botnes para personalizar texto-->
+                <li id="personalizar">
+                    <div class="input-group">
+                        <div class="form-check ">
+                            <!-- Negrita -->
+                             <button id="btnNegrita" class="btnper" onclick="negrita() " style="font-weight: bold;">N</button>
+                            
+                        </div>
+                        <div class="form-check">
+                            <!-- Cursiva -->
+                            <button id="btnCursiva" class="btnper" onclick="cursiva()" style="font-style: italic;">C</button>
+                        </div>
+                        <div class="form-check">
+                            <!-- Subrayado -->
+                            <button id="btnSub" class="btnper" onclick="subrayado()" style="text-decoration: underline;">S</button>
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btnFont">Fuentes</button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item" onclick="cambiarFuente('Arial')">Arial</li>
+                        <li class="dropdown-item" onclick="cambiarFuente('Courier')">Courier</li>
+                        <li class="dropdown-item" onclick="cambiarFuente('Georgia')">Georgia</li>
+                        <li class="dropdown-item" onclick="cambiarFuente('Times New Roman')">Times New Roman</li>
+                        <li class="dropdown-item" onclick="cambiarFuente('Verdana')">Verdana</li>
+                    </ul>
                 </li>
             </ul>
         </div>
 
         <!-- Main Content -->
         <div id="contenedor_sidebar_pizarra" class="content">
+            <button id="boton" class="btnpag " onclick="previousPage()">
+                <i class="bi bi-caret-left-fill"></i>
+            </button>
             <!-- Canvas -->
             <canvas id="pizarra_canva" width="900" height="500"></canvas>
+            <button id="boton" class="btnpag" onclick="nextPage()">
+                <i class="bi bi-caret-right-fill"></i>
+            </button>
         </div>
+        
     </div>
 
     <!-- Footer -->
@@ -185,16 +254,22 @@
                 <div class="modal-body">
                     <!-- Opciones de color -->
                     <div class="color-options">
-                        <div class="color-option selected" style="background-color: #fff799;" onclick="cambiarColor(this, '#fff799')"></div>
-                        <div class="color-option" style="background-color: #ccff90;" onclick="cambiarColor(this, '#ccff90')"></div>
-                        <div class="color-option" style="background-color: #ffcccb;" onclick="cambiarColor(this, '#ffcccb')"></div>
-                        <div class="color-option" style="background-color: #a0e7e5;" onclick="cambiarColor(this, '#a0e7e5')"></div>
-                        <div class="color-option" style="background-color: #e0e0e0;" onclick="cambiarColor(this, '#e0e0e0')"></div>
+                        <div class="color-option selected" style="background-color: #fff799;"
+                            onclick="cambiarColor(this, '#fff799')"></div>
+                        <div class="color-option" style="background-color: #ccff90;"
+                            onclick="cambiarColor(this, '#ccff90')"></div>
+                        <div class="color-option" style="background-color: #ffcccb;"
+                            onclick="cambiarColor(this, '#ffcccb')"></div>
+                        <div class="color-option" style="background-color: #a0e7e5;"
+                            onclick="cambiarColor(this, '#a0e7e5')"></div>
+                        <div class="color-option" style="background-color: #e0e0e0;"
+                            onclick="cambiarColor(this, '#e0e0e0')"></div>
                     </div>
                     <textarea class="text-area " id="noteArea"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btncancelarnota">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="btncancelarnota">Cancelar</button>
                     <button type="button" class="btn btn-primary" onclick="guardarNota()">agregar</button>
                 </div>
             </div>
@@ -212,17 +287,23 @@
                     <textarea class="note-area" id=""></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btncancelartexto">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="btncancelartexto">Cancelar</button>
                     <button type="button" class="btn btn-primary" onclick="AgregarText()">Agregar</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
     <script src="fabricPizarra.js"></script>
-   
-   
+    
+
+
+
 </body>
+
 </html>

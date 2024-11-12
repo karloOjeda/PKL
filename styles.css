@@ -2,17 +2,52 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 .content-wrapper {
     display: flex;
     flex: 1;
+    overflow: hidden;
+}
+.titulos{
+    color: #ffffff;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+}
+.btnpag{
+    border: none;
+    background-color: transparent;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: #f8f9fab9;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+    font-size: 2rem;
+}
+.btnpag:hover{
+    background-color: #dddfe0b9;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+}
+.btnper{
+    border-radius: 20%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.btnper:hover{
+    background-color: #dddfe0b9;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
 }
 .sidebar {
     min-width: 150px;
-    background-color: #f8f9fab9;
+    background-color: #dddfe0b9;
     padding: 20px;
     justify-content: space-around;
     text-align: center;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+}
+.nav-item{
+    border: #000;
 }
 .content {
     flex: 1;
@@ -29,8 +64,16 @@ canvas {
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
   
 }
+
+.canvasmin{
+    width: 150px;
+    height: 100px;
+    margin: 10px; /* Ajusta el valor según sea necesario */
+    border: 1px solid #ccc; 
+}
 #pizarra_canva {
     background-color: #ffffff; /* fondo blanco */
+   
   }
 #contenedor_sidebar_pizarra{
     padding-top: 10px;
@@ -91,3 +134,17 @@ footer {
     border-radius: 4px;
     margin-bottom: 15px;
 }
+
+
+.sidebar-right {
+    width: 200px; /* Ajusta el ancho según tus necesidades */
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-left: 1px solid #ddd; /* Puedes quitar esto si no lo necesitas */
+    overflow: auto;
+    height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+    max-height: calc(100vh - 20px); /* Ajusta la altura máxima, dejando espacio para el footer */
+    margin-left: auto; /* Esto empuja el sidebar a la derecha */
+}
+
+
